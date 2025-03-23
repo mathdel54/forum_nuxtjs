@@ -1,0 +1,36 @@
+services:
+  app:
+    build: .
+    container_name: forum_app
+    restart: always
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=forum
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    image: mysql:8
+    container_name: forum_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=forum
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
