@@ -1,7 +1,7 @@
 import { defineWrappedResponseHandler } from '~/server/utils/mysql';
 import { getRouterParam } from 'h3';
 
-export const GET = defineWrappedResponseHandler(async (event) => {
+export default defineWrappedResponseHandler(async (event) => {
   const id = getRouterParam(event, 'id');
   const { mysql } = event.context;
   

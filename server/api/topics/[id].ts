@@ -1,7 +1,7 @@
 import { defineWrappedResponseHandler } from '~/server/utils/mysql';
 import { broadcastToAll } from '~/server/routes/_ws';
 
-export const GET = defineWrappedResponseHandler(async (event) => {
+export default defineWrappedResponseHandler(async (event) => {
   const id = event.context.params?.id;
   if (!id) {
     return { error: 'Topic ID is required' };

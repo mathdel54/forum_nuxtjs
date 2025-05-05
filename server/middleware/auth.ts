@@ -8,6 +8,11 @@ interface SessionData {
 }
 
 export default defineEventHandler(async (event) => {
+
+  if (!event.req.url?.startsWith('/api')) {
+    return; // Ignore les requêtes qui ne sont pas des routes API
+  }
+
   // Exclure les routes qui ne nécessitent pas d'authentification
   const path = event.node.req.url || '';
   

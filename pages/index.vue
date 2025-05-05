@@ -1,6 +1,16 @@
 <script setup>
-const auth = useAuth();
-const { data: forums } = await useFetch('/api/forums');
+import {ref} from 'vue'
+
+const auth = useAuth()
+const forums = ref([])
+
+
+try {
+  const {data} = await useFetch('/api/forums')
+  forums.value = data.value
+} catch (error) {
+  console.error('Error fetching forums:', error)
+}
 </script>
 
 <template>
@@ -10,7 +20,7 @@ const { data: forums } = await useFetch('/api/forums');
         <h1>Forums</h1>
       </v-col>
       <v-col cols="auto">
-        <v-btn v-if="auth.user?.is_admin" color="primary" to="/forums/new">
+        <v-btn v-if="auth?.user?.is_admin" color="primary" to="/forums/new">
           Nouveau Forum
         </v-btn>
       </v-col>
@@ -18,10 +28,10 @@ const { data: forums } = await useFetch('/api/forums');
 
     <v-list>
       <v-list-item
-        v-for="forum in forums"
-        :key="forum.id"
-        :to="`/forums/${forum.id}`"
-        class="mb-2"
+          v-for="forum in forums"
+          :key="forum.id"
+          :to="`/forums/${forum.id}`"
+          class="mb-2"
       >
         <v-list-item-title>{{ forum.name }}</v-list-item-title>
         <v-list-item-subtitle>

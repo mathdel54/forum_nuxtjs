@@ -1,7 +1,7 @@
 import { defineWrappedResponseHandler } from '~/server/utils/mysql';
 import { broadcastToAll } from '~/server/routes/_ws';
 
-export const POST = defineWrappedResponseHandler(async (event) => {
+export default defineWrappedResponseHandler(async (event) => {
   const sessionId = getCookie(event, 'session_id');
   if (!sessionId) {
     return { error: 'Authentication required' };
