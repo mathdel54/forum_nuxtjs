@@ -4,7 +4,7 @@ const router = useRouter();
 
 // Rediriger si l'utilisateur n'est pas admin
 onMounted(async () => {
-  if (!auth.user?.is_admin) {
+  if (!auth?.isAuthenticated.value) {
     router.push('/');
   }
 });

@@ -4,9 +4,11 @@ const route = useRoute();
 const router = useRouter();
 const forumId = route.params.id;
 
+console.log('Forum ID:', forumId);
+
 // Rediriger si l'utilisateur n'est pas connecté
 onMounted(async () => {
-  if (!auth.isAuthenticated) {
+  if (!auth.isAuthenticated.value) {
     router.push('/login');
   }
 });

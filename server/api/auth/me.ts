@@ -1,9 +1,10 @@
-import { defineWrappedResponseHandler } from '~/server/utils/mysql';
 
-export const GET = defineEventHandler(async (event) => {
+
+export default defineEventHandler(async (event) => {
   const sessionId = getCookie(event, 'session_id');
-  
+
   if (!sessionId) {
+
     return { authenticated: false };
   }
   

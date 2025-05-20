@@ -3,8 +3,7 @@ let ws
 const messages = ref([])
 // Fonction de connexion au serveur WebSocket
 const connect = async () => {
-    // En HTTP, le protocole ws:// est utilisé. En HTTPS, il est
-    nécessaire
+    // En HTTP, le protocole ws:// est utilisé. En HTTPS, il est nécessaire
     // d'utiliser le protocole wss://.
     const isSecure = location.protocol === "https:";
     const url = (isSecure ? "wss://" : "ws://") + location.host +
@@ -24,8 +23,7 @@ const connect = async () => {
         messages.value.push(message)
     });
     // On attend d'être connecté. L'objet WebSocket natif n'utilise
-    // pas les promesses, donc on triche un peu pour pouvoir
-    utiliser
+    // pas les promesses, donc on triche un peu pour pouvoir utiliser
     // await sur l'étape de connexion.
     await new Promise((resolve) => ws.addEventListener("open",
         resolve));

@@ -98,6 +98,9 @@ export async function initDatabase() {
             )
             console.log('Admin user created successfully')
         }
+        else {
+            console.log('Admin user already exists')
+        }
 
         console.log('Database initialized successfully')
     } catch (error) {

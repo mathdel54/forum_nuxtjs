@@ -1,5 +1,6 @@
 <script setup>
 const auth = useAuth();
+
 const router = useRouter();
 
 const username = ref('');
@@ -18,7 +19,7 @@ const login = async () => {
   
   try {
     await auth.login(username.value, password.value);
-    router.push('/');
+    await router.push('/');
   } catch (e) {
     error.value = e.message || 'Une erreur est survenue';
   } finally {
