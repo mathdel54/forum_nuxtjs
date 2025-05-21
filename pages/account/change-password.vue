@@ -1,10 +1,5 @@
 <script setup>
-import { ref } from 'vue';
-import { useAuth } from '~/composables/useAuth';
-import { useRouter } from 'vue-router';
-
-const auth = useAuth();
-const router = useRouter();
+import {ref} from 'vue';
 
 const currentPassword = ref('');
 const newPassword = ref('');

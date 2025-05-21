@@ -1,61 +1,35 @@
-// Define session interface
-interface SessionData {
-    user: {
-        is_admin: boolean;
-        [key: string]: any;
-    };
+import jwt from 'jsonwebtoken';
 
-    [key: string]: any;
-}
+const JWT_SECRET = 'your_secret_key';
 
 export default defineEventHandler(async (event) => {
-
-    // Exclure les routes qui ne nécessitent pas d'authentification
     const path = event.node.req.url || '';
-    console.log('Middleware auth.ts executed : ', path);
 
-    // Ignore les requêtes qui ne sont pas des routes API
     if (!path.startsWith('/api/')) {
-        console.log('Ignoring non-API request');
         return;
     }
 
-    if (path.startsWith('/api/auth/login') ||
+    if (
+        path.startsWith('/api/auth/login') ||
         path.startsWith('/api/auth/me') ||
         path.startsWith('/api/users') ||
-        path === '/api/forums' && event.node.req.method === 'GET' ||
+        (path === '/api/forums' && event.node.req.method === 'GET') ||
         path.match(/^\/api\/forums\/\d+$/) && event.node.req.method === 'GET' ||
-        path.match(/^\/api\/topics\/\d+$/) && event.node.req.method === 'GET') {
+        path.match(/^\/api\/topics\/\d+$/) && event.node.req.method === 'GET'
+    ) {
         return;
     }
 
-    const sessionId = getCookie(event, 'session_id');
-
-    if (!sessionId) {
-        return createError({
-            statusCode: 401,
-            message: 'Unauthorized'
-        });
+    const authHeader = event.node.req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return createError({statusCode: 401, message: 'Unauthorized'});
     }
 
-    const session = await useStorage('sessions').getItem(sessionId) as SessionData;
+    const token = authHeader.split(' ')[1];
 
-    if (!session) {
-        deleteCookie(event, 'session_id');
-        return createError({
-            statusCode: 401,
-            message: 'Unauthorized'
-        });
-    }
-
-    // Si la route nécessite des privilèges d'admin
-    if (path.match(/^\/api\/forums\/\d+$/) &&
-        (event.node.req.method === 'PUT' || event.node.req.method === 'DELETE')) {
-        if (!session.user.is_admin) {
-            return createError({
-                statusCode: 403,
-                message: 'Forbidden'
-            });
-        }
+    try {
+        event.context.user = jwt.verify(token, JWT_SECRET); // Attach user info to the context
+    } catch (err) {
+        return createError({statusCode: 401, message: 'Invalid token'});
     }
 });

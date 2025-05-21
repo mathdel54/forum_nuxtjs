@@ -9,12 +9,10 @@
 </template>
 
 <script setup>
-import { useAuth } from '~/composables/useAuth';
-
-const auth = useAuth();
+import { fetchUser } from '~/services/auth';
 
 onMounted(async () => {
   console.log('mounted');
-  await auth.fetchUser();
+  await fetchUser();
 });
 </script>

@@ -1,5 +1,5 @@
 <script setup>
-const auth = useAuth();
+import {login as authLogin} from '~/services/auth';
 
 const router = useRouter();
 
@@ -8,17 +8,17 @@ const password = ref('');
 const error = ref('');
 const loading = ref(false);
 
-const login = async () => {
+const handleLogin = async () => {
   if (!username.value || !password.value) {
     error.value = 'Veuillez remplir tous les champs';
     return;
   }
-  
+
   loading.value = true;
   error.value = '';
-  
+
   try {
-    await auth.login(username.value, password.value);
+    await authLogin(username.value, password.value);
     await router.push('/');
   } catch (e) {
     error.value = e.message || 'Une erreur est survenue';
@@ -38,21 +38,21 @@ const login = async () => {
             <v-alert v-if="error" type="error" class="mb-4">
               {{ error }}
             </v-alert>
-            
-            <v-form @submit.prevent="login">
+
+            <v-form @submit.prevent="handleLogin">
               <v-text-field
                 v-model="username"
                 label="Nom d'utilisateur"
                 required
               ></v-text-field>
-              
+
               <v-text-field
                 v-model="password"
                 label="Mot de passe"
                 type="password"
                 required
               ></v-text-field>
-              
+
               <div class="d-flex justify-end mt-4">
                 <v-btn
                   color="primary"
@@ -65,7 +65,7 @@ const login = async () => {
             </v-form>
           </v-card-text>
         </v-card>
-        
+
         <div class="text-center mt-4">
           <p>Pas encore de compte ? <NuxtLink to="/register">S'inscrire</NuxtLink></p>
         </div>

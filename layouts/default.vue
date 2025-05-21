@@ -1,16 +1,14 @@
 <script setup>
 import {ref} from 'vue';
-import {useAuth} from '~/composables/useAuth';
+import {isAuthenticated, logout as authLogout, isAdmin, useUser} from '~/services/auth';
 
-const auth = useAuth();
+
 const showMenu = ref(false);
 
 const logout = async () => {
-  if (auth) {
-    await auth.logout();
-    showMenu.value = false;
-    navigateTo('/');
-  }
+  await authLogout();
+  showMenu.value = false;
+  navigateTo('/');
 };
 </script>
 
@@ -24,7 +22,7 @@ const logout = async () => {
 
         <v-spacer></v-spacer>
 
-        <template v-if="auth?.isAuthenticated.value">
+        <template v-if="isAuthenticated">
           <v-btn icon @click="showMenu = !showMenu">
             <v-icon>mdi-account</v-icon>
           </v-btn>
@@ -32,8 +30,10 @@ const logout = async () => {
           <v-menu v-if="showMenu" v-model="showMenu" :close-on-content-click="false" location="bottom end">
             <v-card style="max-height: 300px; overflow-y: auto;">
               <v-card-text>
-                <div class="text-h6">{{ auth.user?.username }}</div>
-                <div v-if="auth.user?.is_admin" class="text-caption mb-2">Administrateur</div>
+                <div class="text-h6">{{ useUser().value.username }}</div>
+                <div v-if="isAdmin" class="text-subtitle-2">
+                  Administrateur
+                </div>
               </v-card-text>
               <v-divider></v-divider>
               <v-card-actions>

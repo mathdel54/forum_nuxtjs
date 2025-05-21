@@ -1,5 +1,5 @@
 <script setup>
-const auth = useAuth();
+import { login } from '~/services/auth';
 const router = useRouter();
 
 const username = ref('');
@@ -40,7 +40,7 @@ const register = async () => {
     }
     
     // Connecter l'utilisateur après l'inscription
-    await auth.login(username.value, password.value);
+    await login(username.value, password.value);
     router.push('/');
   } catch (e) {
     error.value = e.message || 'Une erreur est survenue';

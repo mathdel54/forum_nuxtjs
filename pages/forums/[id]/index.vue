@@ -1,5 +1,6 @@
 <script setup>
-const auth = useAuth();
+import {isAuthenticated} from '~/services/auth';
+
 const route = useRoute();
 const forumId = route.params.id;
 
@@ -36,7 +37,8 @@ const goToPage = (page) => {
         <h1>{{ forum.name }}</h1>
       </div>
       <div>
-        <v-btn v-if="auth?.isAuthenticated.value" color="primary" :to="`/forums/${forumId}/topics/new`">
+        {{isAuthenticated}}
+        <v-btn v-if="isAuthenticated" color="primary" :to="`/forums/${forumId}/topics/new`">
           Nouveau sujet
         </v-btn>
       </div>
@@ -69,7 +71,7 @@ const goToPage = (page) => {
     <div v-else class="text-center py-5">
       <p>Aucun sujet dans ce forum pour le moment.</p>
       <v-btn
-        v-if="auth?.isAuthenticated.value"
+          v-if="isAuthenticated"
         color="primary"
         :to="`/forums/${forumId}/topics/new`"
         class="mt-3"

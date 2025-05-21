@@ -1,8 +1,8 @@
 <script setup>
-const auth = useAuth();
+import { user, isAdmin } from '~/services/auth';
 
-console.log('Auth user:', auth.user.value);
-console.log('Is Admin:', auth.isAdmin.value);
+console.log('Auth user:', user.value);
+console.log('Is Admin:', isAdmin.value);
 const route = useRoute();
 const topicId = route.params.id;
 

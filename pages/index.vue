@@ -1,10 +1,8 @@
 <script setup>
 import {ref} from 'vue'
-definePageMeta({
-  layout: 'default',
-});
-const auth = useAuth()
+import { isAuthenticated } from '~/services/auth';
 const forums = ref([])
+
 
 try {
   const {data} = await useFetch('/api/forums')
@@ -22,7 +20,7 @@ try {
           <h1>Forums</h1>
         </v-col>
         <v-col cols="auto">
-          <v-btn v-if="auth?.isAuthenticated.value" color="primary" to="/forums/new">
+          <v-btn v-if="isAuthenticated" color="primary" :to="`/forums/new`">
             Nouveau Forum
           </v-btn>
         </v-col>
