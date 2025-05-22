@@ -7,7 +7,7 @@ export const defineWrappedResponseHandler = <T extends EventHandlerRequest, D>(h
     defineEventHandler<T>(async event => {
         try {
             const connection = await mysql.createConnection({
-                host: 'localhost',
+                host: 'db',
                 user: 'root',
                 password: 'root',
                 database: 'forum',
@@ -26,7 +26,7 @@ export const defineWrappedResponseHandler = <T extends EventHandlerRequest, D>(h
 // Fonction pour initialiser la base de données
 export async function initDatabase() {
     const connection = await mysql.createConnection({
-        host: 'localhost',
+        host: 'db',
         user: 'root',
         password: 'root',
         Promise: bluebird,
