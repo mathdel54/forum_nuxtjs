@@ -1,5 +1,6 @@
 <script setup>
-import {isAuthenticated} from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
+const authStore = useAuthStore();
 
 const route = useRoute();
 const forumId = route.params.id;
@@ -7,7 +8,11 @@ const forumId = route.params.id;
 const currentPage = ref(1);
 const topicsPerPage = 20;
 
-const { data: forum } = await useFetch(`/api/forums/${forumId}`);
+const { data: forum } = await useFetch(`/api/forums/${forumId}`, {
+  headers: {
+    Authorization: `Bearer ${authStore.token}`,
+  },
+});
 
 const allTopics = computed(() => {
   return forum.value.topics || [];
@@ -37,8 +42,7 @@ const goToPage = (page) => {
         <h1>{{ forum.name }}</h1>
       </div>
       <div>
-        {{isAuthenticated}}
-        <v-btn v-if="isAuthenticated" color="primary" :to="`/forums/${forumId}/topics/new`">
+        <v-btn v-if="authStore.isAuthenticated" color="primary" :to="`/forums/${forumId}/topics/new`">
           Nouveau sujet
         </v-btn>
       </div>
@@ -71,7 +75,7 @@ const goToPage = (page) => {
     <div v-else class="text-center py-5">
       <p>Aucun sujet dans ce forum pour le moment.</p>
       <v-btn
-          v-if="isAuthenticated"
+          v-if="authStore.isAuthenticated"
         color="primary"
         :to="`/forums/${forumId}/topics/new`"
         class="mt-3"

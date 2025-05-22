@@ -1,6 +1,8 @@
 <script setup>
 import {ref} from 'vue'
-import { isAuthenticated } from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
+
+const authStore = useAuthStore();
 const forums = ref([])
 
 
@@ -20,7 +22,7 @@ try {
           <h1>Forums</h1>
         </v-col>
         <v-col cols="auto">
-          <v-btn v-if="isAuthenticated" color="primary" :to="`/forums/new`">
+          <v-btn v-if="authStore.isAuthenticated" color="primary" :to="`/forums/new`">
             Nouveau Forum
           </v-btn>
         </v-col>

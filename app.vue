@@ -9,10 +9,12 @@
 </template>
 
 <script setup>
-import { fetchUser } from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
+
+const authStore = useAuthStore();
 
 onMounted(async () => {
   console.log('mounted');
-  await fetchUser();
+  await authStore.fetchUser();
 });
 </script>

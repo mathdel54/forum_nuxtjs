@@ -1,5 +1,7 @@
 <script setup>
-import {isAuthenticated} from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
+
+const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -9,7 +11,7 @@ console.log('Forum ID:', forumId);
 
 // Rediriger si l'utilisateur n'est pas connecté
 onMounted(async () => {
-  if (!isAuthenticated.value) {
+  if (!authStore.isAuthenticated) {
     router.push('/login');
   }
 });

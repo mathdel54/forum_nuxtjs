@@ -1,5 +1,7 @@
 <script setup>
-import { login } from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
+
+const authStore = useAuthStore();
 const router = useRouter();
 
 const username = ref('');
@@ -40,7 +42,7 @@ const register = async () => {
     }
     
     // Connecter l'utilisateur après l'inscription
-    await login(username.value, password.value);
+    await authStore.login(username.value, password.value);
     router.push('/');
   } catch (e) {
     error.value = e.message || 'Une erreur est survenue';

@@ -1,8 +1,7 @@
 <script setup>
-import { user, isAdmin } from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
 
-console.log('Auth user:', user.value);
-console.log('Is Admin:', isAdmin.value);
+const authStore = useAuthStore();
 const route = useRoute();
 const topicId = route.params.id;
 
@@ -116,6 +115,9 @@ const sendMessage = async () => {
   try {
     const { data, error: fetchError } = await useFetch('/api/messages', {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
       body: {
         topic_id: topicId,
         content: newMessage.value
@@ -152,10 +154,7 @@ const sendMessage = async () => {
           Dans <NuxtLink :to="`/forums/${topic.forum_id}`">{{ topic.forum_name }}</NuxtLink>
         </div>
       </div>
-      <div>
-        {{ auth?.user || 'Utilisateur inconnu' }}
-      </div>
-      <v-btn v-if="auth?.user?.is_admin" color="error" class="ml-auto" @click="deleteTopic">
+      <v-btn v-if="authStore.isAdmin" color="error" class="ml-auto" @click="deleteTopic">
         Supprimer le sujet
       </v-btn>
     </div>
@@ -187,7 +186,7 @@ const sendMessage = async () => {
       class="mt-4"
       @input="goToPage(currentPage)"
     ></v-pagination>
-    <v-card v-if="auth?.isAuthenticated.value" class="mt-4">
+    <v-card v-if="authStore.isAuthenticated" class="mt-4">
       <v-card-text>
         <v-alert v-if="error" type="error" class="mb-4">
           {{ error }}

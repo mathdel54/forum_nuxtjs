@@ -1,11 +1,13 @@
 <script setup>
-import {isAuthenticated} from '~/services/auth';
+import {useAuthStore} from '~/stores/auth';
+
+const authStore = useAuthStore();
 
 const router = useRouter();
 
 // Rediriger si l'utilisateur n'est pas admin
 onMounted(async () => {
-  if (!isAuthenticated.value) {
+  if (!authStore.isAuthenticated && !authStore.isAdmin) {
     router.push('/');
   }
 });

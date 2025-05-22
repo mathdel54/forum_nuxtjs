@@ -1,5 +1,12 @@
 <script setup>
-import {login as authLogin} from '~/services/auth';
+import { useAuthStore } from '~/stores/auth';
+
+import { ref } from 'vue';
+
+import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+
 
 const router = useRouter();
 
@@ -18,7 +25,7 @@ const handleLogin = async () => {
   error.value = '';
 
   try {
-    await authLogin(username.value, password.value);
+    await authStore.login(username.value, password.value);
     await router.push('/');
   } catch (e) {
     error.value = e.message || 'Une erreur est survenue';

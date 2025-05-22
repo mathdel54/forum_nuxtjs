@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {defineWrappedResponseHandler} from '~/server/utils/mysql';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const JWT_SECRET = 'your_secret_key'; // Use a secure, environment-specific secret key
-
+const JWT_SECRET = process.env.JWT_SECRET;
 export default defineWrappedResponseHandler(async (event) => {
   const { username, password } = await readBody(event);
 
