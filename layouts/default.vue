@@ -44,6 +44,9 @@ const logout = async () => {
                 <v-btn block color="primary" @click="logout">
                   Déconnexion
                 </v-btn>
+                <v-btn v-if="authStore.isAdmin" block color="error" to="/admin">
+                  Administration
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-menu>

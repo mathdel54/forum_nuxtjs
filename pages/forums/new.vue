@@ -28,6 +28,9 @@ const createForum = async () => {
   try {
     const { data, error: fetchError } = await useFetch('/api/forums', {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      },
       body: { name: name.value }
     });
     

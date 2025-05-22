@@ -1,5 +1,6 @@
 <script setup>
 import {useAuthStore} from '~/stores/auth';
+
 const authStore = useAuthStore();
 
 const route = useRoute();
@@ -45,6 +46,12 @@ const goToPage = (page) => {
         <v-btn v-if="authStore.isAuthenticated" color="primary" :to="`/forums/${forumId}/topics/new`">
           Nouveau sujet
         </v-btn>
+        <div v-else>
+          <p class="text-h6">Connectez-vous pour créer un sujet</p>
+          <v-btn color="primary" :to="`/login`">
+            Se connecter
+          </v-btn>
+        </div>
       </div>
     </div>
 

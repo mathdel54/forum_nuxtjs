@@ -14,7 +14,12 @@ const error = ref('');
 
 const deleteMessage = async (messageId) => {
   try {
-    await useFetch(`/api/messages/${messageId}`, { method: 'DELETE' });
+    await useFetch(`/api/messages/${messageId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
     await refresh();
   } catch (e) {
     console.error('Error deleting message:', e);
@@ -23,7 +28,12 @@ const deleteMessage = async (messageId) => {
 
 const deleteTopic = async () => {
   try {
-    await useFetch(`/api/topics/${topicId}`, { method: 'DELETE' });
+    await useFetch(`/api/topics/${topicId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
+    });
     navigateTo('/');
   } catch (e) {
     console.error('Error deleting topic:', e);
@@ -39,6 +49,9 @@ const saveEditedMessage = async () => {
   try {
     await useFetch(`/api/messages/${editingMessageId.value}`, {
       method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
       body: { content: editedMessageContent.value },
     });
     editingMessageId.value = null;
@@ -159,24 +172,53 @@ const sendMessage = async () => {
       </v-btn>
     </div>
 
-    <v-card class="mt-4">
-      <v-card-text>
-        <div v-for="message in paginatedMessages" :key="message.id" class="mb-5">
-          <div class="d-flex justify-space-between align-center">
-            <div class="font-weight-bold">
-              {{ message.author_username }}
-            </div>
-            <div class="text-caption">
-              {{ new Date(message.created_at).toLocaleString() }}
+    <v-card-text>
+      <div v-for="message in paginatedMessages" :key="message.id" class="mb-5">
+        <div class="d-flex justify-space-between align-center">
+          <div class="font-weight-bold">
+            {{ message.author_username }}
+          </div>
+          <div class="text-caption">
+            {{ new Date(message.created_at).toLocaleString() }}
+          </div>
+        </div>
+        <div class="mt-2">
+          <div v-if="editingMessageId === message.id">
+            <v-textarea
+                v-model="editedMessageContent"
+                label="Modifier le message"
+                rows="4"
+            ></v-textarea>
+            <div class="d-flex justify-end mt-2">
+              <v-btn color="primary" @click="saveEditedMessage">Enregistrer</v-btn>
+              <v-btn class="ml-2" @click="editingMessageId = null">Annuler</v-btn>
             </div>
           </div>
-          <div class="mt-2">
+          <div v-else>
             {{ message.content }}
           </div>
-          <v-divider class="my-3"></v-divider>
         </div>
-      </v-card-text>
-    </v-card>
+        <div class="d-flex justify-end mt-2">
+          <v-btn
+              v-if="authStore.isAdmin || (authStore.currentUser && message.author_username === authStore.currentUser.username)"              small
+              color="primary"
+              @click="startEditing(message)"
+          >
+            Modifier
+          </v-btn>
+          <v-btn
+              v-if="authStore.isAdmin"
+              small
+              color="error"
+              class="ml-2"
+              @click="deleteMessage(message.id)"
+          >
+            Supprimer
+          </v-btn>
+        </div>
+        <v-divider class="my-3"></v-divider>
+      </div>
+    </v-card-text>
     <!-- Pagination Controls -->
     <v-pagination
       v-if="totalPages > 1"

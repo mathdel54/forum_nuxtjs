@@ -35,6 +35,9 @@ const createTopic = async () => {
   try {
     const { data, error: fetchError } = await useFetch('/api/topics', {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`
+      },
       body: {
         forum_id: forumId,
         title: title.value,

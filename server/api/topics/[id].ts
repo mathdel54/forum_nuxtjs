@@ -43,7 +43,7 @@ export default defineWrappedResponseHandler(async (event) => {
     WHERE 
       m.topic_id = ?
     ORDER BY 
-      m.created_at ASC
+      m.created_at DESC 
   `, [id]);
   
   return {

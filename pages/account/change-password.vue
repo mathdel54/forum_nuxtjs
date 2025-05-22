@@ -1,5 +1,10 @@
 <script setup>
 import {ref} from 'vue';
+import {useAuthStore} from '~/stores/auth';
+
+const authStore = useAuthStore();
+
+
 
 const currentPassword = ref('');
 const newPassword = ref('');
@@ -26,6 +31,9 @@ const changePassword = async () => {
   try {
     const { data, error: fetchError } = await useFetch('/api/auth/change-password', {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${authStore.token}`,
+      },
       body: {
         currentPassword: currentPassword.value,
         newPassword: newPassword.value,

@@ -24,6 +24,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@sidebase/nuxt-session": "^0.2.8",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/ws": "^8.18.0",
