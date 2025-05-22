@@ -7,6 +7,8 @@ const topicId = route.params.id;
 
 const { data: topic, refresh } = await useFetch(`/api/topics/${topicId}`);
 
+console.log('refresh', refresh);
+
 const editingMessageId = ref(null);
 const editedMessageContent = ref('');
 const sendingMessage = ref(false);
@@ -97,8 +99,11 @@ const connectWebSocket = () => {
   ws.addEventListener("message", (event) => {
     try {
       const data = JSON.parse(event.data);
-      if (data.type === 'new_message' && data.topic_id === parseInt(topicId)) {
+
+      if (data.type === "new_message" && data.topic_id === topicId) {
         refresh();
+      } else if (data.type === "topic_deleted" && data.topic_id === topicId) {
+        navigateTo('/');
       }
     } catch (e) {
       console.error("Error parsing WebSocket message:", e);

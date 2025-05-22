@@ -1,4 +1,5 @@
 import {defineWrappedResponseHandler} from '~/server/utils/mysql';
+import { broadcastToAll } from '~/server/routes/_ws';
 
 export default defineWrappedResponseHandler(async (event) => {
     const user = event.context.user;
@@ -29,6 +30,12 @@ export default defineWrappedResponseHandler(async (event) => {
 
     // Supprimer le message
     await mysql.query('DELETE FROM messages WHERE id = ?', [messageId]);
+
+    broadcastToAll({
+        type: 'new_message',
+        message,
+        topic_id,
+    });
 
     return {success: true};
 });

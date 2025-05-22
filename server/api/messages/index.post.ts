@@ -59,7 +59,6 @@ export default defineWrappedResponseHandler(async (event) => {
       message,
       topic_id,
     });
-
     return message;
   } catch (error) {
     await mysql.rollback();

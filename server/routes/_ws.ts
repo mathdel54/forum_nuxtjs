@@ -1,79 +1,34 @@
-import { WebSocketServer } from 'ws'
+const peers = new Set();
 
-const connections = new Set<WebSocket>()
-
-const topicSubscriptions = new Map<string, Set<WebSocket>>()
+export function broadcastToAll(message: object) {
+  const messageString = JSON.stringify(message);
+  for (const peer of peers) {
+    peer.send(messageString);
+  }
+}
 
 export default defineWebSocketHandler({
   open(peer) {
-    console.log("[ws] Connection opened")
-    connections.add(peer as unknown as WebSocket)
+    peers.add(peer);
+    console.log("[ws] open", peer);
   },
-  
   message(peer, message) {
-    const data = JSON.parse(message.text())
-    console.log("[ws] Message received:", data)
-    
-    const client = peer as unknown as WebSocket
-    
-    if (data.action === 'subscribe' && data.topic_id) {
-      const topicId = data.topic_id.toString()
-      
-      if (!topicSubscriptions.has(topicId)) {
-        topicSubscriptions.set(topicId, new Set())
+    console.log("[ws] message", peer, message);
+
+    try {
+      const data = message.json();
+      if (data.type === "ping") {
+        peer.send(JSON.stringify({type: "pong"}));
       }
-      
-      topicSubscriptions.get(topicId)?.add(client)
-      console.log(`[ws] Client subscribed to topic ${topicId}`)
-    }
-    
-    if (data.action === 'unsubscribe' && data.topic_id) {
-      const topicId = data.topic_id.toString()
-      topicSubscriptions.get(topicId)?.delete(client)
-      console.log(`[ws] Client unsubscribed from topic ${topicId}`)
-    }
-    
-    if (data.type === 'new_message' && data.topic_id) {
-      broadcastToTopic(data.topic_id.toString(), data)
+    } catch (error) {
+      console.error("[ws] Error parsing message:", error);
     }
   },
-  
-  close(peer) {
-    console.log("[ws] Connection closed")
-    const client = peer as unknown as WebSocket
-    connections.delete(client)
-    
-    for (const subscribers of topicSubscriptions.values()) {
-      subscribers.delete(client)
-    }
+  close(peer, event) {
+    peers.delete(peer);
+    console.log("[ws] close", peer, event);
   },
-  
   error(peer, error) {
-    console.log("[ws] Error:", error)
-    connections.delete(peer as unknown as WebSocket)
-  }
-})
-
-export function broadcastToAll(data: any) {
-  const message = JSON.stringify(data)
-  connections.forEach((client: WebSocket) => {
-    client.send(message)
-  })
-}
-
-export function broadcastToTopic(topicId: string, data: any) {
-  const message = JSON.stringify(data)
-  const subscribers = topicSubscriptions.get(topicId)
-  
-  if (subscribers) {
-    subscribers.forEach((client: WebSocket) => {
-      client.send(message)
-    })
-  }
-  
-  broadcastToAll({
-    type: 'notification',
-    topic_id: topicId,
-    message: data
-  })
-}
+    console.log("[ws] error", peer, error);
+  },
+});
